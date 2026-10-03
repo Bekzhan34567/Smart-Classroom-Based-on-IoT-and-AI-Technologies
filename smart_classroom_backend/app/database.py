@@ -1,29 +1,52 @@
+import os
 from pathlib import Path
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Определяем путь к базе данных в корне проекта
+# Определяем путь к локальной SQLite-базе
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATABASE_URL = f"sqlite:///{BASE_DIR / 'smart_classroom.db'}"
 
-# Создаём движок SQLAlchemy
-# check_same_thread=False необходим для SQLite в FastAPI (многопоточность)
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+# На Render будет использоваться DATABASE_URL из Environment.
+# Локально, если переменной нет, останется SQLite.
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    f"sqlite:///{BASE_DIR / 'smart_classroom.db'}"
+)
 
-# Фабрика сессий - создаёт новые сессии БД при каждом запросе
-# autocommit=False и autoflush=False для ручного управления транзакциями
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Render иногда может предоставить postgres://
+# SQLAlchemy использует postgresql://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgres://",
+        "postgresql://",
+        1
+    )
 
-# Базовый класс для всех ORM моделей
+# Настройки движка
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"check_same_thread": False}
+    )
+else:
+    engine = create_engine(DATABASE_URL)
+
+# Фабрика сессий
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+# Базовый класс для ORM-моделей
 Base = declarative_base()
 
 
 def get_db():
     """
-    Dependency injection функция для FastAPI.
-    Создаёт новую сессию БД для каждого запроса и гарантирует её закрытие.
-    Используется в эндпоинтах через Depends(get_db).
+    Создаёт отдельную сессию БД для каждого запроса
+    и гарантирует её закрытие.
     """
     db = SessionLocal()
     try:
