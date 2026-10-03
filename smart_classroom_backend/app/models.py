@@ -7,10 +7,6 @@ from .database import Base
 
 
 class Student(Base):
-    """
-    Модель студента в системе.
-    Связана с User через user_id для аутентификации.
-    """
     __tablename__ = "students"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -19,7 +15,6 @@ class Student(Base):
     email = Column(String, unique=True, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=True)
 
-    # ORM отношения
     attendance_records = relationship("Attendance", back_populates="student")
     grades = relationship("Grade", back_populates="student")
     user = relationship("User", back_populates="student_profile", uselist=False)
@@ -52,10 +47,6 @@ class Teacher(Base):
 
 
 class Group(Base):
-    """
-    Модель учебной группы.
-    Группы используются для организации студентов по специальностям/курсам.
-    """
     __tablename__ = "groups"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -166,6 +157,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
     role = Column(String, nullable=False)
+    is_superuser = Column(Integer, default=0)
 
     # ORM отношения - один пользователь может быть либо преподавателем, либо студентом
     teacher_profile = relationship("Teacher", back_populates="user", uselist=False)
