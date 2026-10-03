@@ -116,111 +116,232 @@ def create_demo_data():
             db.refresh(group)
 
         # =========================
-        # 2. Преподаватель + User
+        # 2. Преподаватель 1
         # =========================
-        teacher_email = "teacher@smartclassroom.edu"
+        teacher1_email = "math.teacher@smartclassroom.edu"
 
-        teacher_user = db.query(models.User).filter(
-            models.User.email == teacher_email
+        teacher1_user = db.query(models.User).filter(
+            models.User.email == teacher1_email
         ).first()
 
-        if teacher_user is None:
-            teacher_user = models.User(
+        if teacher1_user is None:
+            teacher1_user = models.User(
                 full_name="Иван Петров",
-                email=teacher_email,
+                email=teacher1_email,
                 password=hash_password("Teacher123!"),
                 role="teacher",
                 is_superuser=0,
             )
-            db.add(teacher_user)
+            db.add(teacher1_user)
             db.commit()
-            db.refresh(teacher_user)
+            db.refresh(teacher1_user)
 
-        teacher = db.query(models.Teacher).filter(
-            models.Teacher.email == teacher_email
+        teacher1 = db.query(models.Teacher).filter(
+            models.Teacher.email == teacher1_email
         ).first()
 
-        if teacher is None:
-            teacher = models.Teacher(
+        if teacher1 is None:
+            teacher1 = models.Teacher(
                 full_name="Иван Петров",
-                subject="Программирование",
-                email=teacher_email,
-                user_id=teacher_user.id,
+                subject="Математика",
+                email=teacher1_email,
+                user_id=teacher1_user.id,
             )
-            db.add(teacher)
+            db.add(teacher1)
             db.commit()
-            db.refresh(teacher)
+            db.refresh(teacher1)
 
         # =========================
-        # 3. Студент + User
+        # 3. Преподаватель 2
         # =========================
-        student_email = "student@smartclassroom.edu"
+        teacher2_email = "programming.teacher@smartclassroom.edu"
 
-        student_user = db.query(models.User).filter(
-            models.User.email == student_email
+        teacher2_user = db.query(models.User).filter(
+            models.User.email == teacher2_email
         ).first()
 
-        if student_user is None:
-            student_user = models.User(
+        if teacher2_user is None:
+            teacher2_user = models.User(
+                full_name="Александр Сидоров",
+                email=teacher2_email,
+                password=hash_password("Teacher123!"),
+                role="teacher",
+                is_superuser=0,
+            )
+            db.add(teacher2_user)
+            db.commit()
+            db.refresh(teacher2_user)
+
+        teacher2 = db.query(models.Teacher).filter(
+            models.Teacher.email == teacher2_email
+        ).first()
+
+        if teacher2 is None:
+            teacher2 = models.Teacher(
+                full_name="Александр Сидоров",
+                subject="Программирование",
+                email=teacher2_email,
+                user_id=teacher2_user.id,
+            )
+            db.add(teacher2)
+            db.commit()
+            db.refresh(teacher2)
+
+        # =========================
+        # 4. Студент 1
+        # =========================
+        student1_email = "student1@smartclassroom.edu"
+
+        student1_user = db.query(models.User).filter(
+            models.User.email == student1_email
+        ).first()
+
+        if student1_user is None:
+            student1_user = models.User(
                 full_name="Алексей Иванов",
-                email=student_email,
+                email=student1_email,
                 password=hash_password("Student123!"),
                 role="student",
                 is_superuser=0,
             )
-            db.add(student_user)
+            db.add(student1_user)
             db.commit()
-            db.refresh(student_user)
+            db.refresh(student1_user)
 
-        student = db.query(models.Student).filter(
-            models.Student.email == student_email
+        student1 = db.query(models.Student).filter(
+            models.Student.email == student1_email
         ).first()
 
-        if student is None:
-            student = models.Student(
+        if student1 is None:
+            student1 = models.Student(
                 full_name="Алексей Иванов",
                 group_name="10A",
-                email=student_email,
-                user_id=student_user.id,
+                email=student1_email,
+                user_id=student1_user.id,
             )
-            db.add(student)
+            db.add(student1)
             db.commit()
-            db.refresh(student)
+            db.refresh(student1)
 
         # =========================
-        # 4. Курс
+        # 5. Студент 2
         # =========================
-        course = db.query(models.Course).filter(
+        student2_email = "student2@smartclassroom.edu"
+
+        student2_user = db.query(models.User).filter(
+            models.User.email == student2_email
+        ).first()
+
+        if student2_user is None:
+            student2_user = models.User(
+                full_name="Мария Смирнова",
+                email=student2_email,
+                password=hash_password("Student123!"),
+                role="student",
+                is_superuser=0,
+            )
+            db.add(student2_user)
+            db.commit()
+            db.refresh(student2_user)
+
+        student2 = db.query(models.Student).filter(
+            models.Student.email == student2_email
+        ).first()
+
+        if student2 is None:
+            student2 = models.Student(
+                full_name="Мария Смирнова",
+                group_name="10A",
+                email=student2_email,
+                user_id=student2_user.id,
+            )
+            db.add(student2)
+            db.commit()
+            db.refresh(student2)
+
+        # =========================
+        # 6. Курс 1
+        # =========================
+        course1 = db.query(models.Course).filter(
+            models.Course.name == "Математика"
+        ).first()
+
+        if course1 is None:
+            course1 = models.Course(
+                name="Математика",
+                group_name="10A",
+                status="active",
+                join_code="MATH10A",
+                teacher_id=teacher1.id,
+            )
+            db.add(course1)
+            db.commit()
+            db.refresh(course1)
+
+        # =========================
+        # 7. Курс 2
+        # =========================
+        course2 = db.query(models.Course).filter(
             models.Course.name == "Программирование"
         ).first()
 
-        if course is None:
-            course = models.Course(
+        if course2 is None:
+            course2 = models.Course(
                 name="Программирование",
                 group_name="10A",
                 status="active",
                 join_code="PROG10A",
-                teacher_id=teacher.id,
+                teacher_id=teacher2.id,
             )
-            db.add(course)
+            db.add(course2)
             db.commit()
-            db.refresh(course)
+            db.refresh(course2)
 
         # =========================
-        # 5. Записываем студента
+        # 8. Студент 1 → курс 1
         # =========================
-        enrollment = db.query(models.Enrollment).filter(
-            models.Enrollment.student_id == student.id,
-            models.Enrollment.course_id == course.id,
-        ).first()
+        if not db.query(models.Enrollment).filter(
+            models.Enrollment.student_id == student1.id,
+            models.Enrollment.course_id == course1.id,
+        ).first():
+            db.add(models.Enrollment(
+                student_id=student1.id,
+                course_id=course1.id,
+            ))
 
-        if enrollment is None:
-            enrollment = models.Enrollment(
-                student_id=student.id,
-                course_id=course.id,
-            )
-            db.add(enrollment)
-            db.commit()
+        # Студент 1 → курс 2
+        if not db.query(models.Enrollment).filter(
+            models.Enrollment.student_id == student1.id,
+            models.Enrollment.course_id == course2.id,
+        ).first():
+            db.add(models.Enrollment(
+                student_id=student1.id,
+                course_id=course2.id,
+            ))
+
+        # =========================
+        # 9. Студент 2 → курс 1
+        # =========================
+        if not db.query(models.Enrollment).filter(
+            models.Enrollment.student_id == student2.id,
+            models.Enrollment.course_id == course1.id,
+        ).first():
+            db.add(models.Enrollment(
+                student_id=student2.id,
+                course_id=course1.id,
+            ))
+
+        # Студент 2 → курс 2
+        if not db.query(models.Enrollment).filter(
+            models.Enrollment.student_id == student2.id,
+            models.Enrollment.course_id == course2.id,
+        ).first():
+            db.add(models.Enrollment(
+                student_id=student2.id,
+                course_id=course2.id,
+            ))
+
+        db.commit()
 
         print("Demo data created successfully")
 
