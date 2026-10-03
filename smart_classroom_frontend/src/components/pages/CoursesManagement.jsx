@@ -138,8 +138,15 @@ export default function CoursesManagement() {
                 <CardDescription>{course.group_name}</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
+  <div className="space-y-3">
+    <div className="p-3 bg-gray-50 rounded-lg border">
+      <div className="text-xs text-gray-500">Код для подключения</div>
+      <div className="font-mono font-semibold text-lg">
+        {course.join_code}
+      </div>
+    </div>
+
+    <div className="flex items-center gap-2">
                     <span
                       className={`px-2 py-1 rounded text-xs ${
                         course.status === "active"
