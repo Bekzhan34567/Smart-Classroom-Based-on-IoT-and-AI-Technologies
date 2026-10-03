@@ -182,8 +182,8 @@ export default function UsersManagement() {
       </Card>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <CardHeader>
               <CardTitle>{editingUser ? "Редактировать пользователя" : "Добавить пользователя"}</CardTitle>
               <Button variant="ghost" size="icon" className="absolute right-4 top-4" onClick={() => setShowModal(false)}>
@@ -192,16 +192,23 @@ export default function UsersManagement() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">ФИО</label>
-                  <input
-                    type="text"
-                    className="w-full mt-1 p-2 border rounded"
-                    value={formData.full_name}
-                    onChange={(e) => setFormData({...formData, full_name: e.target.value})}
-                    required
-                  />
-                </div>
+                <div className="w-full">
+                    <label className="text-sm font-medium">ФИО</label>
+                      <input
+                   type="text"
+              className="w-full mt-1 p-2 border rounded box-border"
+                 value={formData.full_name}
+             onChange={(e) =>
+              setFormData({
+              ...formData,
+              full_name: e.target.value,
+             })
+              }
+                placeholder="Иванов Иван Иванович"
+                 autoComplete="name"
+                required
+               />
+             </div>
                 <div>
                   <label className="text-sm font-medium">Email</label>
                   <input
