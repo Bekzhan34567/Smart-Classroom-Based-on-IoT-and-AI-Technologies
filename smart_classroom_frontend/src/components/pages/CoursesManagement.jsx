@@ -133,16 +133,60 @@ export default function CoursesManagement() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {courses.map((course) => (
-            <Card key={course.id}>
-              <CardHeader>
-                <CardTitle className="text-lg">{course.name}</CardTitle>
-                <CardDescription>{course.group_name}</CardDescription>
-              
-                {isTeacherOrAdmin && (
-              <div className="text-sm text-gray-600 mt-2"> Код курса: <strong>{course.join_code}</strong> </div> )}
-                  </div>
-              )}
-              </CardHeader>
+```jsx
+<Card key={course.id}>
+  <CardHeader>
+    <CardTitle className="text-lg">{course.name}</CardTitle>
+    <CardDescription>{course.group_name}</CardDescription>
+
+    {isTeacherOrAdmin && (
+      <div className="text-sm text-gray-600 mt-2">
+        Код курса: <strong>{course.join_code}</strong>
+      </div>
+    )}
+  </CardHeader>
+
+  <CardContent>
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <span
+          className={`px-2 py-1 rounded text-xs ${
+            course.status === "active"
+              ? "bg-green-100 text-green-800"
+              : "bg-gray-100 text-gray-800"
+          }`}
+        >
+          {course.status === "active" ? "Активен" : "Архив"}
+        </span>
+      </div>
+
+      {isTeacherOrAdmin && (
+        <div className="flex gap-2 pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={() => handleEdit(course)}
+          >
+            <Edit className="h-4 w-4 mr-1" />
+            Редактировать
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-red-600 hover:text-red-700"
+            onClick={() => handleDelete(course.id)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+    </div>
+  </CardContent>
+</Card>
+```
+
           
               <CardContent>
   <div className="space-y-3">
