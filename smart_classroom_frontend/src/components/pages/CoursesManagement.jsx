@@ -136,6 +136,9 @@ export default function CoursesManagement() {
               <CardHeader>
                 <CardTitle className="text-lg">{course.name}</CardTitle>
                 <CardDescription>{course.group_name}</CardDescription>
+                <div className="text-sm text-gray-600 mt-2">
+                Код курса: <strong>{course.join_code}</strong>
+                  </div>
               </CardHeader>
               <CardContent>
   <div className="space-y-3">
