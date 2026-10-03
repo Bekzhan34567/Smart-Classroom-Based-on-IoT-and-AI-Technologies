@@ -102,9 +102,9 @@ def create_demo_data():
     db = SessionLocal()
 
     try:
-        # =========================
-        # 1. Группа
-        # =========================
+        # ==========================================
+        # 1. ГРУППА
+        # ==========================================
         group = db.query(models.Group).filter(
             models.Group.name == "10A"
         ).first()
@@ -115,9 +115,9 @@ def create_demo_data():
             db.commit()
             db.refresh(group)
 
-        # =========================
-        # 2. Преподаватель 1
-        # =========================
+        # ==========================================
+        # 2. ПРЕПОДАВАТЕЛЬ 1
+        # ==========================================
         teacher1_email = "math.teacher@smartclassroom.edu"
 
         teacher1_user = db.query(models.User).filter(
@@ -151,9 +151,9 @@ def create_demo_data():
             db.commit()
             db.refresh(teacher1)
 
-        # =========================
-        # 3. Преподаватель 2
-        # =========================
+        # ==========================================
+        # 3. ПРЕПОДАВАТЕЛЬ 2
+        # ==========================================
         teacher2_email = "programming.teacher@smartclassroom.edu"
 
         teacher2_user = db.query(models.User).filter(
@@ -187,9 +187,9 @@ def create_demo_data():
             db.commit()
             db.refresh(teacher2)
 
-        # =========================
-        # 4. Студент 1
-        # =========================
+        # ==========================================
+        # 4. СТУДЕНТ 1
+        # ==========================================
         student1_email = "student1@smartclassroom.edu"
 
         student1_user = db.query(models.User).filter(
@@ -223,9 +223,9 @@ def create_demo_data():
             db.commit()
             db.refresh(student1)
 
-        # =========================
-        # 5. Студент 2
-        # =========================
+        # ==========================================
+        # 5. СТУДЕНТ 2
+        # ==========================================
         student2_email = "student2@smartclassroom.edu"
 
         student2_user = db.query(models.User).filter(
@@ -259,9 +259,9 @@ def create_demo_data():
             db.commit()
             db.refresh(student2)
 
-        # =========================
-        # 6. Курс 1
-        # =========================
+        # ==========================================
+        # 6. КУРС 1
+        # ==========================================
         course1 = db.query(models.Course).filter(
             models.Course.name == "Математика"
         ).first()
@@ -278,9 +278,9 @@ def create_demo_data():
             db.commit()
             db.refresh(course1)
 
-        # =========================
-        # 7. Курс 2
-        # =========================
+        # ==========================================
+        # 7. КУРС 2
+        # ==========================================
         course2 = db.query(models.Course).filter(
             models.Course.name == "Программирование"
         ).first()
@@ -297,53 +297,176 @@ def create_demo_data():
             db.commit()
             db.refresh(course2)
 
-        # =========================
-        # 8. Студент 1 → курс 1
-        # =========================
-        if not db.query(models.Enrollment).filter(
-            models.Enrollment.student_id == student1.id,
-            models.Enrollment.course_id == course1.id,
-        ).first():
-            db.add(models.Enrollment(
-                student_id=student1.id,
-                course_id=course1.id,
-            ))
+        # ==========================================
+        # 8. ЗАПИСЬ СТУДЕНТОВ НА КУРСЫ
+        # ==========================================
+        enrollments = [
+            (student1.id, course1.id),
+            (student1.id, course2.id),
+            (student2.id, course1.id),
+            (student2.id, course2.id),
+        ]
 
-        # Студент 1 → курс 2
-        if not db.query(models.Enrollment).filter(
-            models.Enrollment.student_id == student1.id,
-            models.Enrollment.course_id == course2.id,
-        ).first():
-            db.add(models.Enrollment(
-                student_id=student1.id,
-                course_id=course2.id,
-            ))
+        for student_id, course_id in enrollments:
+            exists = db.query(models.Enrollment).filter(
+                models.Enrollment.student_id == student_id,
+                models.Enrollment.course_id == course_id,
+            ).first()
 
-        # =========================
-        # 9. Студент 2 → курс 1
-        # =========================
-        if not db.query(models.Enrollment).filter(
-            models.Enrollment.student_id == student2.id,
-            models.Enrollment.course_id == course1.id,
-        ).first():
-            db.add(models.Enrollment(
-                student_id=student2.id,
-                course_id=course1.id,
-            ))
-
-        # Студент 2 → курс 2
-        if not db.query(models.Enrollment).filter(
-            models.Enrollment.student_id == student2.id,
-            models.Enrollment.course_id == course2.id,
-        ).first():
-            db.add(models.Enrollment(
-                student_id=student2.id,
-                course_id=course2.id,
-            ))
+            if exists is None:
+                db.add(models.Enrollment(
+                    student_id=student_id,
+                    course_id=course_id,
+                ))
 
         db.commit()
 
-        print("Demo data created successfully")
+        # ==========================================
+        # 9. ЛЕКЦИИ
+        # ==========================================
+        # 5 и 6 октября 2026 года — понедельник и вторник.
+        # 7 и 8 октября — среда и четверг.
+
+        lecture_data = [
+            {
+                "title": "Основы математики",
+                "subject": "Математика",
+                "date": date(2026, 10, 5),
+                "time": time(9, 0),
+                "duration": 80,
+                "room": "101",
+                "status": "completed",
+                "course_id": course1.id,
+                "teacher_id": teacher1.id,
+            },
+            {
+                "title": "Алгебра и функции",
+                "subject": "Математика",
+                "date": date(2026, 10, 7),
+                "time": time(9, 0),
+                "duration": 80,
+                "room": "101",
+                "status": "completed",
+                "course_id": course1.id,
+                "teacher_id": teacher1.id,
+            },
+            {
+                "title": "Введение в программирование",
+                "subject": "Программирование",
+                "date": date(2026, 10, 6),
+                "time": time(10, 30),
+                "duration": 80,
+                "room": "202",
+                "status": "completed",
+                "course_id": course2.id,
+                "teacher_id": teacher2.id,
+            },
+            {
+                "title": "Основы Python",
+                "subject": "Программирование",
+                "date": date(2026, 10, 8),
+                "time": time(10, 30),
+                "duration": 80,
+                "room": "202",
+                "status": "completed",
+                "course_id": course2.id,
+                "teacher_id": teacher2.id,
+            },
+        ]
+
+        lectures = []
+
+        for data in lecture_data:
+            lecture = db.query(models.Lecture).filter(
+                models.Lecture.title == data["title"],
+                models.Lecture.course_id == data["course_id"],
+            ).first()
+
+            if lecture is None:
+                lecture = models.Lecture(**data)
+                db.add(lecture)
+                db.commit()
+                db.refresh(lecture)
+
+            lectures.append(lecture)
+
+        # ==========================================
+        # 10. ПОСЕЩАЕМОСТЬ
+        # ==========================================
+        attendance_data = [
+            # Математика — лекция 1
+            (student1.id, lectures[0].id, "present"),
+            (student2.id, lectures[0].id, "late"),
+
+            # Математика — лекция 2
+            (student1.id, lectures[1].id, "present"),
+            (student2.id, lectures[1].id, "absent"),
+
+            # Программирование — лекция 1
+            (student1.id, lectures[2].id, "present"),
+            (student2.id, lectures[2].id, "present"),
+
+            # Программирование — лекция 2
+            (student1.id, lectures[3].id, "late"),
+            (student2.id, lectures[3].id, "present"),
+        ]
+
+        for student_id, lecture_id, attendance_status in attendance_data:
+            record = db.query(models.Attendance).filter(
+                models.Attendance.student_id == student_id,
+                models.Attendance.lecture_id == lecture_id,
+            ).first()
+
+            if record is None:
+                record = models.Attendance(
+                    student_id=student_id,
+                    lecture_id=lecture_id,
+                    status=attendance_status,
+                )
+                db.add(record)
+
+        db.commit()
+
+        # ==========================================
+        # 11. ОЦЕНКИ
+        # ==========================================
+        grade_data = [
+            # Алексей — Математика
+            (student1.id, course1.id, "Математика", 90),
+            (student1.id, course1.id, "Математика", 85),
+
+            # Алексей — Программирование
+            (student1.id, course2.id, "Программирование", 95),
+            (student1.id, course2.id, "Программирование", 88),
+
+            # Мария — Математика
+            (student2.id, course1.id, "Математика", 78),
+            (student2.id, course1.id, "Математика", 92),
+
+            # Мария — Программирование
+            (student2.id, course2.id, "Программирование", 84),
+            (student2.id, course2.id, "Программирование", 91),
+        ]
+
+        for student_id, course_id, subject, score in grade_data:
+            exists = db.query(models.Grade).filter(
+                models.Grade.student_id == student_id,
+                models.Grade.course_id == course_id,
+                models.Grade.subject == subject,
+                models.Grade.score == score,
+            ).first()
+
+            if exists is None:
+                db.add(models.Grade(
+                    student_id=student_id,
+                    course_id=course_id,
+                    subject=subject,
+                    score=score,
+                ))
+
+        db.commit()
+
+        print("Demo data with courses, lectures, attendance and grades created successfully")
 
     finally:
         db.close()
