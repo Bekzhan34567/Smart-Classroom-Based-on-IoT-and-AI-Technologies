@@ -4,7 +4,8 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from . import models
-from .database import Base, engine
+from .auth_utils import hash_password
+from .database import Base, engine, SessionLocal
 from .routers import (
     analytics,
     attendance,
@@ -42,7 +43,35 @@ def run_legacy_sqlite_migrations():
                 connection.execute(text(statement))
             except Exception:
                 pass
+def create_default_superadmin():
+    db = SessionLocal()
+    try:
+        email = "superadmin@smartclassroom.edu"
 
+        existing_user = (
+            db.query(models.User)
+            .filter(models.User.email == email)
+            .first()
+        )
+
+        if existing_user is not None:
+            return
+
+        superadmin = models.User(
+            full_name="Super Administrator",
+            email=email,
+            password=hash_password("SuperAdmin123!"),
+            role="admin",
+            is_superuser=1,
+        )
+
+        db.add(superadmin)
+        db.commit()
+
+        print("Default superadmin created")
+
+    finally:
+        db.close()
 
 def backfill_course_join_codes():
     """
@@ -70,10 +99,10 @@ def backfill_course_join_codes():
             session.commit()
 
 
-# Запуск миграций и создание таблиц при старте приложения
 run_legacy_sqlite_migrations()
 Base.metadata.create_all(bind=engine)
 backfill_course_join_codes()
+create_default_superadmin()
 
 app = FastAPI(title="Smart Classroom Backend System")
 
