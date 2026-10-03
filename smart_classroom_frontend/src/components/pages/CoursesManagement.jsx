@@ -138,9 +138,12 @@ export default function CoursesManagement() {
                 <CardTitle className="text-lg">{course.name}</CardTitle>
                 <CardDescription>{course.group_name}</CardDescription>
               
-                {isTeacherOrAdmin && ( <div className="text-sm text-gray-600 mt-2"> Код курса: <strong>{course.join_code}</strong> </div> )}
+                {isTeacherOrAdmin && (
+              <div className="text-sm text-gray-600 mt-2"> Код курса: <strong>{course.join_code}</strong> </div> )}
                   </div>
+              )}
               </CardHeader>
+          
               <CardContent>
   <div className="space-y-3">
     <div className="p-3 bg-gray-50 rounded-lg border">
