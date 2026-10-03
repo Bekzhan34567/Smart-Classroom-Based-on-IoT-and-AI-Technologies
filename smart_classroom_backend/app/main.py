@@ -98,11 +98,141 @@ def backfill_course_join_codes():
         if changed:
             session.commit()
 
+def create_demo_data():
+    db = SessionLocal()
+
+    try:
+        # =========================
+        # 1. Группа
+        # =========================
+        group = db.query(models.Group).filter(
+            models.Group.name == "10A"
+        ).first()
+
+        if group is None:
+            group = models.Group(name="10A")
+            db.add(group)
+            db.commit()
+            db.refresh(group)
+
+        # =========================
+        # 2. Преподаватель + User
+        # =========================
+        teacher_email = "teacher@smartclassroom.edu"
+
+        teacher_user = db.query(models.User).filter(
+            models.User.email == teacher_email
+        ).first()
+
+        if teacher_user is None:
+            teacher_user = models.User(
+                full_name="Иван Петров",
+                email=teacher_email,
+                password=hash_password("Teacher123!"),
+                role="teacher",
+                is_superuser=0,
+            )
+            db.add(teacher_user)
+            db.commit()
+            db.refresh(teacher_user)
+
+        teacher = db.query(models.Teacher).filter(
+            models.Teacher.email == teacher_email
+        ).first()
+
+        if teacher is None:
+            teacher = models.Teacher(
+                full_name="Иван Петров",
+                subject="Программирование",
+                email=teacher_email,
+                user_id=teacher_user.id,
+            )
+            db.add(teacher)
+            db.commit()
+            db.refresh(teacher)
+
+        # =========================
+        # 3. Студент + User
+        # =========================
+        student_email = "student@smartclassroom.edu"
+
+        student_user = db.query(models.User).filter(
+            models.User.email == student_email
+        ).first()
+
+        if student_user is None:
+            student_user = models.User(
+                full_name="Алексей Иванов",
+                email=student_email,
+                password=hash_password("Student123!"),
+                role="student",
+                is_superuser=0,
+            )
+            db.add(student_user)
+            db.commit()
+            db.refresh(student_user)
+
+        student = db.query(models.Student).filter(
+            models.Student.email == student_email
+        ).first()
+
+        if student is None:
+            student = models.Student(
+                full_name="Алексей Иванов",
+                group_name="10A",
+                email=student_email,
+                user_id=student_user.id,
+            )
+            db.add(student)
+            db.commit()
+            db.refresh(student)
+
+        # =========================
+        # 4. Курс
+        # =========================
+        course = db.query(models.Course).filter(
+            models.Course.name == "Программирование"
+        ).first()
+
+        if course is None:
+            course = models.Course(
+                name="Программирование",
+                group_name="10A",
+                status="active",
+                join_code="PROG10A",
+                teacher_id=teacher.id,
+            )
+            db.add(course)
+            db.commit()
+            db.refresh(course)
+
+        # =========================
+        # 5. Записываем студента
+        # =========================
+        enrollment = db.query(models.Enrollment).filter(
+            models.Enrollment.student_id == student.id,
+            models.Enrollment.course_id == course.id,
+        ).first()
+
+        if enrollment is None:
+            enrollment = models.Enrollment(
+                student_id=student.id,
+                course_id=course.id,
+            )
+            db.add(enrollment)
+            db.commit()
+
+        print("Demo data created successfully")
+
+    finally:
+        db.close()
+
 
 run_legacy_sqlite_migrations()
 Base.metadata.create_all(bind=engine)
 backfill_course_join_codes()
 create_default_superadmin()
+create_demo_data()
 
 app = FastAPI(title="Smart Classroom Backend System")
 
