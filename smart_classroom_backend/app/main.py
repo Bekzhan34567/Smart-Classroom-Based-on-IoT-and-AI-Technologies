@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, time
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
